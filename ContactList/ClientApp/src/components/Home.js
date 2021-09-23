@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import authService from './api-authorization/AuthorizeService'
+import authService from './api-authorization/AuthorizeService';
+import { Link } from 'react-router-dom';
 
 
 export class Home extends Component {
@@ -16,9 +17,19 @@ export class Home extends Component {
 	}
 
 	static renderContacts(contacts) {
-		return (<div>a
+		return (<div>
 			{contacts.map(contact =>
-				<h2>{contact.id}, {contact.name}, {contact.surname}, {contact.phone} </h2>
+				<div>
+					<div class="row border-bottom">
+						<div class="col-9">
+							<h3>{contact.name} {contact.surname}</h3>
+						</div>
+						<div class="col-3">
+							<Link to={"/contact/" + contact.id} class="btn btn-info" style={{ "width": "100%" }}>Zobacz</Link>
+						</div>
+					</div>
+					<br />
+				</div>
 			)}
 		</div>
 		);
@@ -26,7 +37,7 @@ export class Home extends Component {
 
 	async fetchContacts(){
 		const token = await authService.getAccessToken();
-		const response = await fetch('Home', {
+		const response = await fetch('home', {
 			headers: !token ? {} : { 'Authorization': `Bearer ${token}` }
 		});
 		const data = await response.json();
@@ -37,7 +48,7 @@ export class Home extends Component {
 		let content = this.state.loading ? <p><em>Loading...</em></p> : Home.renderContacts(this.state.contacts);
 		return (
 			<div>
-			<h1>Moje kontakty</h1>
+				<h1 style={{ "marginBottom": "20px"}}>Moje kontakty</h1>
 				{content}
 			</div>
 		);
