@@ -37,7 +37,7 @@ export class Home extends Component {
 
 	async fetchContacts(){
 		const token = await authService.getAccessToken();
-		const response = await fetch('home', {
+		const response = await fetch('api/home', {
 			headers: !token ? {} : { 'Authorization': `Bearer ${token}` }
 		});
 		const data = await response.json();

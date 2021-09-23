@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.Text.Json.Serialization;
 
 namespace ContactList {
     public class Startup {
@@ -42,6 +43,9 @@ namespace ContactList {
                 .AddIdentityServerJwt();
 
             services.AddControllersWithViews();
+
+            services.AddControllers().AddJsonOptions(x =>
+                x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve);
             services.AddRazorPages();
 
             // In production, the React files will be served from this directory

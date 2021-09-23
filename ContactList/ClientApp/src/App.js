@@ -9,6 +9,7 @@ import ApiAuthorizationRoutes from './components/api-authorization/ApiAuthorizat
 import { ApplicationPaths } from './components/api-authorization/ApiAuthorizationConstants';
 
 import './custom.css'
+import { Contact } from './components/Contact';
 
 export default class App extends Component {
   static displayName = App.name;
@@ -18,6 +19,7 @@ export default class App extends Component {
       <Layout>
         <Route exact path='/' component={Home} />
         <Route path='/counter' component={Counter} />
+        <AuthorizeRoute path='/contact/:cId' component={Contact} />
         <AuthorizeRoute path='/fetch-data' component={FetchData} />
         <Route path={ApplicationPaths.ApiAuthorizationPrefix} component={ApiAuthorizationRoutes} />
       </Layout>

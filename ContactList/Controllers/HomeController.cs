@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ContactList.Controllers {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class HomeController : ControllerBase {
         private readonly ContactContext _db;
 
