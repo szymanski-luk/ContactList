@@ -21,7 +21,7 @@ export class New extends Component {
 
 	async fetchCategories() {
 		const token = await authService.getAccessToken();
-		const response = await fetch('api/home', {
+		const response = await fetch('api/category', {
 			headers: !token ? {} : { 'Authorization': `Bearer ${token}` }
 		});
 		const data = await response.json();
@@ -50,8 +50,8 @@ export class New extends Component {
 				<div class="form-group">
 					<label for="category">Kategoria</label>
 					<select class="form-control" name="category" id="category">
-						{categories.map(category => 
-							<option>{category.name}</option>
+						{categories.map(category =>
+							<option value={ category.id }>{category.name}</option>
 						)}
 					</select>
 				</div>
