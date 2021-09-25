@@ -18,6 +18,8 @@ export class Contact extends Component {
 		this.state = {
 			contact: [], loading: true
 		};
+
+		this.deleteContact = this.deleteContact.bind(this);
 	}
 
 	componentDidMount() {
@@ -52,12 +54,22 @@ export class Contact extends Component {
 		this.setState({ contact: data, loading: false });
 	}
 
+	async deleteContact() {
+		const token = await authService.getAccessToken();
+		await fetch('api/contact/delete/' + this.state.contact.id, {
+			method: 'DELETE',
+			headers: !token ? {} : { 'Authorization': `Bearer ${token}` }
+		});
+		window.location.replace('/');
+    }
+
 	render() {
 		let content = this.state.loading ? <p><em>Loading...</em></p> : Contact.renderContacts(this.state.contact);
 		return (
 			<div>
 				<h1 style={{ "marginBottom": "20px" }}>Moje kontakty</h1>
 				{content}
+				<button onClick={this.deleteContact} className="btn btn-danger">Usuń</button>
 			</div>
 		);
 	}
