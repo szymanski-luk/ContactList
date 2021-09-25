@@ -8,9 +8,9 @@ import { Counter } from './components/Counter';
 import AuthorizeRoute from './components/api-authorization/AuthorizeRoute';
 import ApiAuthorizationRoutes from './components/api-authorization/ApiAuthorizationRoutes';
 import { ApplicationPaths } from './components/api-authorization/ApiAuthorizationConstants';
-
 import './custom.css'
 import { Contact } from './components/Contact';
+import { Edit } from './components/Edit';
 
 export default class App extends Component {
   static displayName = App.name;
@@ -20,8 +20,10 @@ export default class App extends Component {
       <Layout>
         <Route exact path='/' component={Home} />
         <Route path='/counter' component={Counter} />
-        <Route path="/new" component={New} />
-        <AuthorizeRoute path='/contact/:cId' component={Contact} />
+            <Route path="/new" component={New} />
+           
+            <AuthorizeRoute path='/contact/:cId' component={Contact} />
+            <AuthorizeRoute path="/cedit/:cId" component={Edit} />
         <AuthorizeRoute path='/fetch-data' component={FetchData} />
         <Route path={ApplicationPaths.ApiAuthorizationPrefix} component={ApiAuthorizationRoutes} />
       </Layout>

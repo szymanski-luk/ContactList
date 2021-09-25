@@ -2,14 +2,15 @@
 import { Redirect } from 'react-router-dom';
 import authService from './api-authorization/AuthorizeService';
 
-export class New extends Component {
-	static displayName = New.name;
+export class Edit extends Component {
+	static displayName = Edit.name;
 
 	constructor(props) {
 		super(props);
 		this.state = {
 			categories: [],
 			contacts: [],
+			thisContact: [],
 			loading: true,
 			foundEmail: false,
 			securePassword: false,
@@ -31,7 +32,14 @@ export class New extends Component {
 	componentDidMount() {
 		this.fetchCategories();
 		this.fetchContacts();
+		this.fetchThisContact();
 	}
+
+	handleSubmit(event) {
+		event.preventDefault();
+		this.updateContact();
+	}
+
 
 	handleChange(ev)  {
 		let nam = ev.target.name;
@@ -43,7 +51,7 @@ export class New extends Component {
 
 		switch (nam) {
 			case 'email':
-				if (nam == 'email') {
+				if (nam == 'email' && val != this.state.thisContact.email) {
 					this.setState({ foundEmail: false });
 					for (var i = 0; i < this.state.contacts.length; i++) {
 						if (this.state.contacts[i].email == val) {
@@ -80,13 +88,33 @@ export class New extends Component {
 		if (re.test(phone)) {
 			this.setState({ validPhone: true });
         }
-    }
-
-	handleSubmit(event) {
-		event.preventDefault();
-		this.createContact();
 	}
 
+	async fetchThisContact() {
+		const token = await authService.getAccessToken();
+		const response = await fetch('api/contact/' + this.props.match.params.cId, {
+			headers: !token ? {} : { 'Authorization': `Bearer ${token}` }
+		});
+		const data = await response.json();
+
+
+		this.setState({
+			firstname: data.name,
+			surname: data.surname,
+			email: data.email,
+			password: data.password,
+			category: data.category.id,
+			phone: data.phone,
+			date: new Date(data.birthDate).getFullYear() + "-" + ((new Date(data.birthDate).getMonth() + 1) < 10 ? "0" : "") + (new Date(data.birthDate).getMonth() + 1) + "-" + ((new Date(data.birthDate).getDate()) < 10 ? "0" : "") + new Date(data.birthDate).getDate(),
+			thisContact: data
+		})
+
+		this.password_validator(this.state.password);
+		this.phone_validator(this.state.phone);
+
+    }
+
+	
 	async fetchContacts() {
 		const token = await authService.getAccessToken();
 		const response = await fetch('api/home', {
@@ -108,8 +136,9 @@ export class New extends Component {
 		});
 	}
 
-	async createContact() {
+	async updateContact() {
 		const newContact = {
+			id: this.props.match.params.cId,
 			name: this.state.firstname,
 			surname: this.state.surname,
 			email: this.state.email,
@@ -122,21 +151,24 @@ export class New extends Component {
 		}
 		const token = await authService.getAccessToken();
 		const postMethod = {
-			method: 'POST',
+			method: 'PUT',
 			headers: !token ? { 'Content-type': 'application/json; charset=UTF-8' } : { 'Content-type': 'application/json; charset=UTF-8', 'Authorization': `Bearer ${token}` },
 			body: JSON.stringify(newContact)
 		}
-		await fetch('api/contact', postMethod);
+		await fetch('api/contact/update/' + this.props.match.params.cId, postMethod);
 		//window.location.replace('/');
+
 		this.setState({ redirectToReferrer: true })
     }
 	
 
 	render() {
 		let content = this.state.loading ? <p><em>Loading...</em></p> : <span></span>;
-		if (this.state.redirectToReferrer) {
+		const redirectToReferrer = this.state.redirectToReferrer;
+		if (redirectToReferrer) {
 			return <Redirect to="/" />
 		}
+
 		return (
 			<div>
 				{content}
@@ -175,7 +207,7 @@ export class New extends Component {
 					</div>
 					<div class="form-group">
 						<label for="date">Data urodzenia</label>
-						<input type="date" class="form-control" name="date" id="date" value={this.state.date} onChange={this.handleChange} required/>
+						<input type="date" class="form-control" name="date" id="date" value={this.state.date} onChange={this.handleChange} required />
 					</div>
 					<input
 						type="submit"

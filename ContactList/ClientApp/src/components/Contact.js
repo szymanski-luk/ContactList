@@ -69,6 +69,7 @@ export class Contact extends Component {
 			<div>
 				<h1 style={{ "marginBottom": "20px" }}>Moje kontakty</h1>
 				{content}
+				<Link to={"/cedit/" + this.props.match.params.cId} className="btn btn-warning">Edytuj</Link>
 				<button onClick={this.deleteContact} className="btn btn-danger">Usuń</button>
 			</div>
 		);
